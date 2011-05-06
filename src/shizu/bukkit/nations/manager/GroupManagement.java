@@ -2,11 +2,10 @@ package shizu.bukkit.nations.manager;
 
 import java.util.HashMap;
 
-import org.bukkit.entity.Player;
-
 import shizu.bukkit.nations.Nations;
 import shizu.bukkit.nations.object.Group;
 import shizu.bukkit.nations.object.NAWObject;
+import shizu.bukkit.nations.object.User;
 
 public class GroupManagement extends Management {
 
@@ -17,20 +16,36 @@ public class GroupManagement extends Management {
 		type = "group";
 	}
 	
-	public void foundNation(Player player, String name) {
+	public Boolean groupExists(String key) {
+
+		return (collection.containsKey(key)) ? true : false;
+	}
+	
+	public Group getGroup(String key) {
+
+		return (groupExists(key)) ? (Group) collection.get(key) : null;
+	}
+	
+	public void foundNation(User user, String name) {
 		
 		// TODO: No case check on nation name
 		// TODO: check if the player is already in a nation or owns a nation
-		if (!collection.containsKey(name)) {
+		if (!groupExists(name)) {
 			
-			Group group = new Group(name);
-			group.addMember(player.getDisplayName());
-			group.setFounder(player.getDisplayName());
-			collection.put(name, group);
-			this.saveObject(name);
-			player.sendMessage("The Nation of: " + name + " has been founded!"); // TODO: broadcast to all?
+			if (user.getNation().equals("")) {
+				
+				Group group = new Group(name);
+				group.addMember(user.getKey());
+				group.addLeader(user.getKey());
+				user.setNation(name);
+				collection.put(name, group);
+				saveObject(name);
+				user.message("The Nation of '" + name + "' has been founded!"); // TODO: broadcast to all?
+			} else {
+				user.message("You are already a member of a nation. You must leave that nation before you can found your own!");
+			}
 		} else {
-			player.sendMessage("A Nation with that name already exists!");
+			user.message("A Nation with that name already exists!");
 		}
 		
 	}

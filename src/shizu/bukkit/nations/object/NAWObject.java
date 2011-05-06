@@ -9,7 +9,7 @@ import org.bukkit.World;
  * 
  * @author Shizukesa
  */
-@SuppressWarnings("serial") //Read up on this!
+@SuppressWarnings("serial")
 public class NAWObject implements Serializable {
 	
 	protected transient World world;
@@ -24,6 +24,12 @@ public class NAWObject implements Serializable {
 	 * @param w The world to attach to this object
 	 */
 	public void setWorld(World w) {
-		this.world = w;
+		
+		world = w;
+	}
+	
+	public World getWorld() {
+		
+		return world;
 	}
 }

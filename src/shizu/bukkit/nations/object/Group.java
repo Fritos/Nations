@@ -7,8 +7,8 @@ public class Group extends NAWObject {
 
 	private String name;
 	private ArrayList<String> members;
+	private ArrayList<String> leaders;
 	private ArrayList<String> plots;
-	private String founder;
 	
 	// TODO: tie in with Permissions groups (String[] getGroups() ? )
 	
@@ -16,8 +16,8 @@ public class Group extends NAWObject {
 
 		name = n;
 		members = new ArrayList<String>();
+		leaders = new ArrayList<String>();
 		plots = new ArrayList<String>();
-		founder = "";
 	}
 	
 	/**
@@ -26,8 +26,15 @@ public class Group extends NAWObject {
 	 */
 	public void addMember(String name) {
 		
-		if (!members.contains(name)) {
+		if (!hasMember(name)) {
 			members.add(name);
+		}
+	}
+	
+	public void addLeader(String name) {
+		
+		if (hasMember(name) && !hasLeader(name)) {
+			leaders.add(name);
 		}
 	}
 	
@@ -37,7 +44,7 @@ public class Group extends NAWObject {
 	 */
 	public void addPlot(String key) {
 		
-		if (!plots.contains(key)) {
+		if (!hasPlot(key)) {
 			plots.add(key);
 		}
 	}
@@ -48,7 +55,13 @@ public class Group extends NAWObject {
 	 * @return true if the user was found, false otherwise
 	 */
 	public Boolean hasMember(String name) {
+		
 		return (members.contains(name)) ? true : false;
+	}
+	
+	public Boolean hasLeader(String name) {
+		
+		return (leaders.contains(name)) ? true : false;
 	}
 	
 	/**
@@ -57,15 +70,8 @@ public class Group extends NAWObject {
 	 * @return true if the plot was found, false otherwise
 	 */
 	public Boolean hasPlot(String key) {
+		
 		return (plots.contains(key)) ? true : false;
-	}
-	
-	/**
-	 * Returns the name of the founder of this group/nation
-	 * @return the name of the founder
-	 */
-	public String getFounder() {
-		return founder;
 	}
 	
 	/**
@@ -73,6 +79,7 @@ public class Group extends NAWObject {
 	 * @return the group/nation name
 	 */
 	public String getKey() {
+		
 		return name;
 	}
 	
@@ -81,7 +88,13 @@ public class Group extends NAWObject {
 	 * @return member names
 	 */
 	public ArrayList<String> getMembers() {
+		
 		return members;
+	}
+	
+	public ArrayList<String> getLeaders() {
+		
+		return leaders;
 	}
 	
 	/**
@@ -89,6 +102,7 @@ public class Group extends NAWObject {
 	 * @return plot location keys
 	 */
 	public ArrayList<String> getPlots() {
+		
 		return plots;
 	}
 	
@@ -98,8 +112,15 @@ public class Group extends NAWObject {
 	 */
 	public void removeMember(String name) {
 		
-		if (members.contains(name)) {
+		if (hasMember(name)) {
 			members.remove(members.indexOf(name));
+		}
+	}
+	
+	public void removeLeader(String name) {
+		
+		if (hasLeader(name)) {
+			leaders.remove(leaders.indexOf(name));
 		}
 	}
 	
@@ -109,16 +130,8 @@ public class Group extends NAWObject {
 	 */
 	public void removePlot(String key) {
 		
-		if (plots.contains(key)) {
+		if (hasPlot(key)) {
 			plots.remove(plots.indexOf(key));
 		}
-	}
-	
-	/**
-	 * Sets the founder/leader of this group/nation
-	 * @param name the name of the user to become founder
-	 */
-	public void setFounder(String name) {
-		founder = name;
 	}
 }

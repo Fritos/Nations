@@ -1,5 +1,6 @@
 package shizu.bukkit.nations.object;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -15,9 +16,28 @@ public class User extends NAWObject {
 	private String nationKey;
 	private String locationKey;
 	private String currentLocation;
+	private transient Player player;
 	
 	public User(Player n) {
+		
+		player = n;
 		key = n.getDisplayName();
+		nationKey = "";
+	}
+	
+	public void message(String message) {
+		
+		player.sendMessage(message);
+	}
+	
+	public void setPlayer(Player p) {
+		
+		player = p;
+	}
+	
+	public Location getLocation() {
+		
+		return player.getLocation();
 	}
 	
 	/**
@@ -25,6 +45,7 @@ public class User extends NAWObject {
 	 * @return the key
 	 */
 	public String getKey() {
+		
 		return key;
 	}
 	
@@ -33,6 +54,7 @@ public class User extends NAWObject {
 	 * @return the nation
 	 */
 	public String getNation() {
+		
 		return nationKey;
 	}
 	
@@ -42,10 +64,12 @@ public class User extends NAWObject {
 	 * @return
 	 */
 	public String getLocationKey() {
+		
 		return locationKey;
 	}
 	
 	public String getCurrentLocationName() {
+		
 		return currentLocation;
 	}
 	
@@ -54,6 +78,7 @@ public class User extends NAWObject {
 	 * @param n
 	 */
 	public void setNation(String n) {
+		
 		nationKey = n;
 	}
 	
@@ -62,10 +87,12 @@ public class User extends NAWObject {
 	 * the value is "" if the user is not in a plot
 	 */
 	public void setLocationKey(String l) {
+		
 		locationKey = l;
 	}
 	
 	public void setCurrentLocationName(String c) {
+		
 		currentLocation = c;
 	}
 }

@@ -60,15 +60,6 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Returns the world the plot resides in
-	 * @see org.bukkit.Chunk#getWorld()
-	 */ 
-	@Override
-	public World getWorld() {
-		return world;
-	}
-	
-	/**
 	 * Returns the block from the relative plot coordinates
 	 * @see org.bukkit.Chunk#getBlock(int, int, int)
 	 */

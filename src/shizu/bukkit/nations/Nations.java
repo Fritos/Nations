@@ -19,6 +19,7 @@ import shizu.bukkit.nations.event.NationsUserListener;
 import shizu.bukkit.nations.manager.GroupManagement;
 import shizu.bukkit.nations.manager.PlotManagement;
 import shizu.bukkit.nations.manager.UserManagement;
+import shizu.bukkit.nations.object.User;
 
 /**
  * Nations At War plugin class
@@ -51,10 +52,10 @@ public class Nations extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLAYER_KICK, userListener, Event.Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_MOVE, userListener, Event.Priority.High, this);
 
-		
 		plotManager.loadAll();
 		groupManager.loadAll();
-		this.sendToLog("Nations At War Plugin Loaded");
+		userManager.loadAll();
+		sendToLog("Nations At War Plugin Loaded");
 	}
 
 	public void onDisable() {
@@ -65,38 +66,45 @@ public class Nations extends JavaPlugin {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 		
-		if (userManager.collection.containsKey(((Player)sender).getDisplayName())) {
 		// TODO Commands: Make this not suck
+		String name = ((Player) sender).getDisplayName();
+		User user = (userManager.userExists(name)) ? userManager.getUser((Player) sender) : null;
+		
+		if (user != null) {
+			
 			if (commandLabel.equalsIgnoreCase("naw")) {
 				
 				if (args[0].equalsIgnoreCase("plot")) {
 					
 					if (args[1].equalsIgnoreCase("claim")) {
-						plotManager.claimPlot((Player)sender);
+						plotManager.claimPlot(user);
 					}
 					
 					if (args[1].equalsIgnoreCase("raze")) {
-						plotManager.razePlot((Player)sender);
+						plotManager.razePlot(user);
 					}
 					
 					if (args[1].equalsIgnoreCase("resell")) {
-						plotManager.resellPlot((Player)sender);
+						plotManager.resellPlot(user);
 					}
 					
 					if (args[1].equalsIgnoreCase("region")) {
-						plotManager.setRegion((Player)sender, args[2]);
+						plotManager.setRegion(user, args[2]);
 					}
 				}
 				
 				if (args[0].equalsIgnoreCase("nation")) {
 					
+					//TODO: error if args[2] does not exist!
 					if (args[1].equalsIgnoreCase("found")) {
-						groupManager.foundNation((Player)sender, args[2]);
+						groupManager.foundNation(user, args[2]);
 					}
 				}
 			}
 			return true;
 		}
+		
+		((Player) sender).sendMessage("You must be registered in NAW to use this functionality");
 		return false;
 	}
 	

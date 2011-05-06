@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 
 import shizu.bukkit.nations.Nations;
 import shizu.bukkit.nations.object.NAWObject;
-import shizu.bukkit.nations.object.Plot;
 import shizu.bukkit.nations.object.User;
 
 /**
@@ -22,49 +21,78 @@ public class UserManagement extends Management {
 		collection = new HashMap<String, NAWObject>();
 		type = "user";
 	}
+	
+	public Boolean userExists(String key) {
 
+		return (collection.containsKey(key)) ? true : false;
+	}
+	
+	public User getUser(Player player) {
+		
+		String name = player.getDisplayName();
+		return (userExists(name)) ? (User) collection.get(name) : null;
+	}
+	
+	public Boolean isLeader(User user) {
+		
+		if (plugin.groupManager.groupExists(user.getNation())) {
+			return (plugin.groupManager.getGroup(user.getNation()).hasLeader(user.getKey())) ? true : false;
+		} 
+		
+		return false;
+	}
+	
 	public void registerUser(Player player) {
 		
 		String name = player.getDisplayName();
 		
-		if (!collection.containsKey(name)) {
+		if (!userExists(name)) {
+			
 			User user = new User(player);
-			user.setLocationKey(plugin.plotManager.getLocationKey(player.getLocation()));
+			user.setWorld(plugin.getWorld());
+			user.setLocationKey(getLocationKey(player.getLocation()));
 			collection.put(name, user);
-			this.saveObject(name);
-			player.sendMessage("You have been registered for Nations at War!");
+			saveObject(name);
+			loadObject(name);
+			user.message("You have been registered for Nations at War!");
 			plugin.sendToLog("User: " + name + " has been registered!");
+		} else {
+			plugin.sendToLog("User: " + name + " already exists!");
 		}
 	}
 	
-	public Boolean loadUser(Player player) {
+	public void loadUser(Player player) {
 	
-		String name = player.getDisplayName();
+		User user = getUser(player);
 		
-		if (!collection.containsKey(name)) {
-			collection.remove(name);
+		if (user != null) {
+			user.setWorld(plugin.getWorld());
+			user.setPlayer(player);
+			user.setLocationKey(getLocationKey(player.getLocation()));
+			plugin.userManager.saveObject(user.getKey());
+			plugin.sendToLog("User: " + user.getKey() + " sucessfully loaded!");
+		} else {
+			
+			plugin.sendToLog("Error loading user: " + player.getDisplayName());
 		}
-		
-		return this.loadObject(name);
 	}
 	
-	// TODO: clean up, oh gawd...
 	public Boolean updateLocation(Player player) {
 		
 		String name = player.getDisplayName();
 		
 		//if registered user
-		if (collection.containsKey(name)) {
+		if (userExists(name)) {
 			
-			User user = (User)collection.get(name);
+			User user = getUser(player);
 			String locKey = plugin.plotManager.getLocationKey(player.getLocation());
 			
 			//if registered user moved to a new chunk
 			if (!user.getLocationKey().equals(locKey)) {
 				
-				if (plugin.plotManager.collection.containsKey(locKey)) {
+				if (plugin.plotManager.plotExists(locKey)) {
 					
-					String locName = ((Plot) plugin.plotManager.collection.get(locKey)).getLoctionName();
+					String locName = plugin.plotManager.getPlot(locKey).getLoctionName();
 					
 					if (!user.getCurrentLocationName().equals(locName)) {
 						

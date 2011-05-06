@@ -12,7 +12,7 @@ import shizu.bukkit.nations.Nations;
 public class NationsUserListener extends PlayerListener {
 	
 	// TODO Config: pull this data from config
-	private final Boolean registerOnJoin = true;
+	private final Boolean REGISTER_ON_JOIN = true;
 	private Nations plugin;
 	
 	public NationsUserListener(Nations instance) {
@@ -24,17 +24,20 @@ public class NationsUserListener extends PlayerListener {
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		
 		Player player = event.getPlayer();
-		player.sendMessage("Nations at War!");
+		String name = player.getDisplayName();
 		
-		if (plugin.userManager.loadUser(player)) {
-		
-				plugin.userManager.updateLocation(player);
+		if (plugin.userManager.userExists(name)) {
+			
+			plugin.userManager.loadUser(player);
 		} else {
-			if (registerOnJoin) {
-				plugin.userManager.registerUser(player);		
+			
+			if (REGISTER_ON_JOIN) {
+				
+				plugin.userManager.registerUser(player);
+				plugin.userManager.loadUser(player);
 			} else {
-				player.sendMessage("* You are not yet registered on the server *");
-				player.sendMessage("NAW functionality will be disabled until you are registered!");
+				player.sendMessage("*** You are not yet registered on the server ***");
+				player.sendMessage("*** NAW functionality will be disabled until you are registered! ***");
 			}
 		}
 	}

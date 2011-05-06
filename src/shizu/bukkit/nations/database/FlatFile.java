@@ -80,7 +80,6 @@ public class FlatFile implements DataSource {
 			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
 			out.writeObject(obj);
 			out.close();
-			plugin.sendToLog(key + " saved!");
 		} catch (IOException e) {
 			plugin.sendToLog(e.getMessage());
 		}
@@ -106,15 +105,14 @@ public class FlatFile implements DataSource {
 			ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
 			obj = (NAWObject)in.readObject();
 			in.close();
-			plugin.sendToLog(key + " loaded!");
 			return obj;
 		} catch (IOException e) {
 			plugin.sendToLog(e.getMessage());
-			return null;
 		} catch (ClassNotFoundException e) {
 			plugin.sendToLog(e.getMessage());
-			return null;
 		}
+		
+		return null;
 	}
 	
 	/**

@@ -3,6 +3,9 @@ package shizu.bukkit.nations.manager;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+
 import shizu.bukkit.nations.Nations;
 import shizu.bukkit.nations.database.DataSource;
 import shizu.bukkit.nations.database.FlatFile;
@@ -34,13 +37,27 @@ public abstract class Management {
 	}
 	
 	/**
+	 * Returns the Plot identification key for the given location
+	 * 
+	 * @param loc The Location to create a key for
+	 * @return the newly created identification key
+	 */
+	public String getLocationKey(Location loc) {
+		
+		 Chunk chunk = loc.getBlock().getChunk();
+		 int x = chunk.getX();
+		 int z = chunk.getZ();
+		 return x + "." + z;
+	}
+	
+	/**
 	 * Stores an object from the server to the data source
 	 * 
 	 * @param key The key identifier of the data to store
 	 */
 	public void saveObject(String key) {
 		
-		NAWObject obj = (NAWObject)collection.get(key);
+		NAWObject obj = (NAWObject) collection.get(key);
 		database.save(type, key, obj);
 	}
 	
@@ -81,6 +98,8 @@ public abstract class Management {
 		for (String key : collection.keySet()) {
 			saveObject(key.toString());
 		}
+		
+		plugin.sendToLog(String.valueOf(collection.size()) +  " " + type + "s saved!"); 
 	}
 	
 	/**
@@ -93,6 +112,8 @@ public abstract class Management {
 		for (String key : keys) {
 			loadObject(key);
 		}
+		
+		plugin.sendToLog(String.valueOf(collection.size()) +  " " + type + "s loaded!");
 	}
 	
 	/**
