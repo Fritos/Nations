@@ -13,7 +13,8 @@ import shizu.bukkit.nations.Nations;
 import shizu.bukkit.nations.object.NAWObject;
 
 /**
- * Saves and loads NAW data to and from local flat-files
+ * Saves and loads 'Nations at War' data to and from local flat-files. The directories
+ * are pre-defined in the 'paths' HashMap.
  * 
  * @author Shizukesa
  */
@@ -32,10 +33,10 @@ public class FlatFile implements DataSource {
 	}
 	
 	/**
-	 * Initiates the flat file directory structure. If the directories do not
-	 * exist, they are created
+	 * Initiates the flat-file directory structure. If the directories do not
+	 * exist, they are created.
 	 * 
-	 * @return Returns true on a successful check, false on error
+	 * @return true if directories exist or are created, false otherwise
 	 */
 	private Boolean initFileStructure() {
 		
@@ -60,13 +61,12 @@ public class FlatFile implements DataSource {
 	}
 	
 	/**
-	 * Serializes and stores the data to a file.
+	 * Serializes and stores the data to a flat-file. If the file does
+	 * not exist, it is created.
 	 * 
-	 * @param type The type of data being saved. Determines the
-	 * 		  save path.
-	 * @param key The identification key of the data being saved. 
-	 * 		  Determines the file name.
-	 * @param obj The data to save
+	 * @param type Key for the 'paths' HashMap to determine the working directory
+	 * @param key The identification key of the data being saved, also the file name
+	 * @param obj The data to serialize and save
 	 */
 	public void save(String type, String key, NAWObject obj) {
 		
@@ -87,13 +87,11 @@ public class FlatFile implements DataSource {
 	
 	
 	/**
-	 * Deserializes and sends data to the server.
+	 * Deserializes and returns data from a flat-file.
 	 * 
-	 * @param type The type of data being loaded. Determines the
-	 * 			   load path.
-	 * @param key The identification key of the data being loaded.
-	 * 			  Determines the file name.
-	 * @return the deserialized object
+	 * @param type Key for the 'paths' HashMap to determine the working directory
+	 * @param key The name of the file to deserialize
+	 * @return the deserialized data, null on error
 	 */
 	@Override
 	public NAWObject load(String type, String key) {
@@ -116,10 +114,10 @@ public class FlatFile implements DataSource {
 	}
 	
 	/**
-	 * Deletes the data file from the provided directory
+	 * Deletes the flat-file.
 	 * 
-	 * @param type the type of data to delete
-	 * @param key The key identifier of the file to delete
+	 * @param type Key for the 'paths' HashMap to determine the working directory
+	 * @param key The name of the file to delete
 	 */
 	@Override
 	public void delete(String type, String key) {
@@ -133,11 +131,10 @@ public class FlatFile implements DataSource {
 	}
 
 	/**
-	 * Counts the serialized data files in the provided directory
-	 * and returns their key identifiers
+	 * Gathers the names of all flat-files from a given directory.
 	 * 
-	 * @param type the type of data to gather
-	 * @return the gathered key identifiers
+	 * @param type Key for the 'paths' HashMap to determine the working directory
+	 * @return the names of all flat-files in that directory
 	 */
 	@Override
 	public ArrayList<String> gatherDataset(String type) {

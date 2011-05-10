@@ -7,12 +7,11 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 
 /**
- * The Nations at War Plot object. Stores vital Plot information
- * for use by the server
+ * The Nations at War Plot object.
  * 
  * @author Shizukesa
  */
-@SuppressWarnings("serial") //Read up on this!
+@SuppressWarnings("serial")
 public class Plot extends NAWObject implements Chunk {
 
 	private final String key; //Key used as hash map reference
@@ -34,37 +33,45 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Returns the location key for this plot (X.Y)
-	 * @return the location key of this plot
+	 * Returns the location key for this Plot (X.Y)
+	 * 
+	 * @return the location key of this Plot
 	 */
 	public String getKey() {
+		
 		return key;
 	}
 
 	/**
-	 * Returns the chunk x-coordinate of this plot
+	 * Returns the chunk x-coordinate of this Plot
+	 * 
 	 * @see org.bukkit.Chunk#getX()
 	 */
 	@Override
 	public int getX() {
+		
 		return worldX;
 	}
 	
 	/**
-	 * Returns the chunk z-coordinate of this plot
+	 * Returns the chunk z-coordinate of this Plot
+	 * 
 	 * @see org.bukkit.Chunk#getZ()
 	 */
 	@Override
 	public int getZ() {
+		
 		return worldZ;
 	}
 	
 	/**
-	 * Returns the block from the relative plot coordinates
+	 * Returns the Block from the relative Plot coordinates
+	 * 
 	 * @see org.bukkit.Chunk#getBlock(int, int, int)
 	 */
 	@Override
     public Block getBlock(int x, int y, int z) {
+		
     	return world.getBlockAt(worldX + x, y, worldZ + z);
     }
     
@@ -83,31 +90,38 @@ public class Plot extends NAWObject implements Chunk {
     }
 	
 	/**
-	 * Returns the name of the region the plot is in
+	 * Returns the name of this Plot's region
+	 * 
 	 * @return the region name
 	 */
 	public String getRegion() {
+		
 		return region;
 	}
 	
 	/**
-	 * Returns the name of the owner of the plot
-	 * @return the owner name (user/nation)
+	 * Returns the name of this Plot's owner
+	 * 
+	 * @return the owner name (User/nation)
 	 */
 	public String getOwner() {
+		
 		return owner;
 	}
 	
 	/**
-	 * Returns the "for sale" status of the plot
-	 * @return true if the plot is for sale, false otherwise
+	 * Returns the "for sale" status of this Plot
+	 * 
+	 * @return true if the Plot is for sale, false otherwise
 	 */
 	public Boolean getSaleStatus() {
+		
 		return forSale;
 	}
 	
 	/**
-	 * Returns the owner + region display name of this plot
+	 * Returns the owner + region display name of this Plot
+	 * 
 	 * @return the plots display name
 	 */
 	public String getLoctionName() {
@@ -117,23 +131,26 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Sets the region the plot resides in
+	 * Sets the name of this Plot's region
 	 */
 	public void setRegion(String newRegion) {
+		
 		region = newRegion;
 	}
 	
 	/**
-	 * Sets the owners name
+	 * Sets the name of this Plot's owner
 	 */
 	public void setOwner(String newOwner) {
+		
 		owner = newOwner;
 	}
 	
 	/**
-	 * Sets the "for sale" status
+	 * Sets the "for sale" status of this Plot
 	 */
 	public void setSaleStatus(Boolean saleStatus) {
+		
 		forSale = saleStatus;
 	}
 }

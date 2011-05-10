@@ -10,16 +10,16 @@ import shizu.bukkit.nations.object.NAWObject;
 import shizu.bukkit.nations.object.Plot;
 import shizu.bukkit.nations.object.User;
 
-
 /**
- * Manages Plot objects and their interaction between the server
- * and data sources.
+ * Manages instances of the Plot class and their interactions
+ * between the server and data source.
  * 
  * @author Shizukesa
  */
 public class PlotManagement extends Management {
 	
 	//TODO: Add config toggle to allow players not associated with a nation to claim/edit plots
+	//TODO: buy plot, check if new claim is an 'outpost'
 	
 	public PlotManagement(Nations instance) {
 		
@@ -27,24 +27,30 @@ public class PlotManagement extends Management {
 		collection = new HashMap<String, NAWObject>();
 		type = "plot";
 	}
-	
-	// TODO PlotManagement: buy plot, check if new claim is an 'outpost'
-	
+	//TODO: Try moving this method to the parent for abstraction
 	public Boolean plotExists(String key) {
 
 		return (collection.containsKey(key)) ? true : false;
 	}
 	
+	/**
+	 * Fetches the Plot for the provided location key, if it exists.
+	 * 
+	 * @param key The location key of the Plot to get
+	 * @return the Plot at the provided location key, 
+	 * 		   null if no matching instance exists
+	 */
 	public Plot getPlot(String key) {
 		
 		return (plotExists(key)) ? (Plot) collection.get(key) : null;
 	}
 	
 	/**
-	 * Returns the Plot from a specific location
+	 * Fetches the Plot from a specific location
 	 * 
-	 * @param loc The location containing the plot
-	 * @return The Plot at the given location
+	 * @param loc The location of the Plot
+	 * @return the Plot at the given location, null
+	 * 		   if no Plot was found
 	 */
 	public Plot getPlotAtLocation(Location loc) {
 	
@@ -54,6 +60,13 @@ public class PlotManagement extends Management {
 		return plot;
 	}
 	
+	/**
+	 * Fetches the Plot from a User's location
+	 * 
+	 * @param user The User at the Plot
+	 * @return the Plot at the User's location, null
+	 * 		   if no Plot was found
+	 */
 	public Plot getPlotAtUser(User user) {
 		
 		Plot plot = getPlot(user.getLocationKey());
@@ -61,6 +74,14 @@ public class PlotManagement extends Management {
 		return plot;
 	}
 	
+	/**
+	 * Creates a Plot (if none exists), gives ownership to the 
+	 * commanding User/Nation, then loads the Plot into 'collection'
+	 * and saves it to the data source.
+	 * 
+	 * @param user The User claiming the Plot
+	 * @return true if the Plot was created, false otherwise
+	 */
 	public Boolean claimPlot(User user) {
 		
 		String locKey = user.getLocationKey();
@@ -90,6 +111,13 @@ public class PlotManagement extends Management {
 		}
 	}
 	
+	/**
+	 * Destroys the Plot and ownership settings for the commanding 
+	 * User/Nation.
+	 * 
+	 * @param user The User destroying the Plot
+	 * @return true if the Plot was destroyed, false otherwise
+	 */
 	public Boolean razePlot(User user) {
 		
 		String locKey = user.getLocationKey();
@@ -117,6 +145,14 @@ public class PlotManagement extends Management {
 		}
 	}
 	
+	/**
+	 * Flags a Plot as being available for resale by the commanding
+	 * User/Nation.
+	 * 
+	 * @param user The User reselling the Plot
+	 * @return true if the Plot resale status was toggled, false
+	 * 		   otherwise
+	 */
 	public Boolean resellPlot(User user) {
 		
 		String locKey = user.getLocationKey();
@@ -148,6 +184,14 @@ public class PlotManagement extends Management {
 		}
 	}
 	
+	/**
+	 * Renames the regional description of the Plot for the commanding
+	 * User/Nation.
+	 * 
+	 * @param user The user renaming the Plot's region
+	 * @param region The new region description
+	 * @return true if the Plot's region was renamed, false otherwise
+	 */
 	public Boolean setRegion(User user, String region) {
 		
 		String locKey = user.getLocationKey();
@@ -175,7 +219,7 @@ public class PlotManagement extends Management {
 	
 	/**
 	 * Creates torches at the plot's corners to signify its boundaries. If the Plot
-	 * is for sale, redstone torches are created at the corners.
+	 * is for sale, redstone torches are created instead.
 	 * 
 	 * @param plot The Plot who's boundaries will be created/shown
 	 */

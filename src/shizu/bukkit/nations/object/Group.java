@@ -2,6 +2,11 @@ package shizu.bukkit.nations.object;
 
 import java.util.ArrayList;
 
+/**
+ * The Nations at War Group object.
+ * 
+ * @author Shizukesa
+ */
 @SuppressWarnings("serial")
 public class Group extends NAWObject {
 
@@ -21,8 +26,9 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Adds a user to this group/nation
-	 * @param name the name of the user to add
+	 * Adds a user to this group/nation.
+	 * 
+	 * @param name The name of the user to add
 	 */
 	public void addMember(String name) {
 		
@@ -31,6 +37,12 @@ public class Group extends NAWObject {
 		}
 	}
 	
+	/**
+	 * Add a user to the leaders list of this
+	 * group/nation.
+	 * 
+	 * @param name The name of the User to add
+	 */
 	public void addLeader(String name) {
 		
 		if (hasMember(name) && !hasLeader(name)) {
@@ -39,8 +51,10 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Adds a plot to this group/nation
-	 * @param key the location key of the plot to add
+	 * Adds a Plot to the Plot ownership list of
+	 * this group/nation
+	 * 
+	 * @param key The location key of the plot to add
 	 */
 	public void addPlot(String key) {
 		
@@ -50,9 +64,10 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Checks to see if a user is associated with this group/nation
-	 * @param name the name of the user to check for
-	 * @return true if the user was found, false otherwise
+	 * Checks to see if a User is associated with this group/nation.
+	 * 
+	 * @param name The name of the User to check
+	 * @return true if the User was found, false otherwise
 	 */
 	public Boolean hasMember(String name) {
 		
@@ -65,9 +80,10 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Checks to see if a plot is associated with this group/nation
-	 * @param key the location key of the plot to check for
-	 * @return true if the plot was found, false otherwise
+	 * Checks to see if a Plot is owned by this group/nation.
+	 * 
+	 * @param key The location key of the Plot to check for
+	 * @return true if the Plot was found, false otherwise
 	 */
 	public Boolean hasPlot(String key) {
 		
@@ -75,7 +91,8 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Returns the key of this group/nation (group name)
+	 * Returns the key of this group/nation (group name).
+	 * 
 	 * @return the group/nation name
 	 */
 	public String getKey() {
@@ -84,8 +101,9 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Returns all members associated with this group
-	 * @return member names
+	 * Returns all members associated with this group.
+	 * 
+	 * @return member's User names
 	 */
 	public ArrayList<String> getMembers() {
 		
@@ -98,8 +116,9 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Returns all plots associated with this group
-	 * @return plot location keys
+	 * Returns all Plots associated with this group.
+	 * 
+	 * @return Plot location keys
 	 */
 	public ArrayList<String> getPlots() {
 		
@@ -107,8 +126,10 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Removes a member from this group/nation
-	 * @param name the name of the member to remove
+	 * Removes a User from this group/nation's
+	 * member list.
+	 * 
+	 * @param name The name of the User to remove
 	 */
 	public void removeMember(String name) {
 		
@@ -117,6 +138,12 @@ public class Group extends NAWObject {
 		}
 	}
 	
+	/**
+	 * Removes a User from this group/nation's
+	 * leadership list.
+	 * 
+	 * @param name The name of the User to remove
+	 */
 	public void removeLeader(String name) {
 		
 		if (hasLeader(name)) {
@@ -125,8 +152,10 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Removes a plot from this group/nation
-	 * @param key the location key of the plot to remove
+	 * Removes a Plot from this group/nation's
+	 * Plot ownership list.
+	 * 
+	 * @param key The location key of the Plot to remove
 	 */
 	public void removePlot(String key) {
 		

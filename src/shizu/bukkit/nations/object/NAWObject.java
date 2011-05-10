@@ -28,6 +28,11 @@ public class NAWObject implements Serializable {
 		world = w;
 	}
 	
+	/**
+	 * Returns the world that this object belongs to
+	 * 
+	 * @return the world
+	 */
 	public World getWorld() {
 		
 		return world;

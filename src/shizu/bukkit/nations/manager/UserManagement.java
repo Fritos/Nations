@@ -9,7 +9,8 @@ import shizu.bukkit.nations.object.NAWObject;
 import shizu.bukkit.nations.object.User;
 
 /**
- * Manages users and their interactions with server objects
+ * Manages instances of the User class and their interactions
+ * between the server and data source.
  * 
  * @author Shizukesa
  */
@@ -22,17 +23,32 @@ public class UserManagement extends Management {
 		type = "user";
 	}
 	
+	//TODO: Try moving this method to the parent for abstraction
 	public Boolean userExists(String key) {
 
 		return (collection.containsKey(key)) ? true : false;
 	}
 	
+	/**
+	 * Fetches the User instance for the provided Player, if it exists
+	 * 
+	 * @param player The Player to fetch for
+	 * @return the User instance of the provided player, null if no
+	 * 		   matching instance exists
+	 */
 	public User getUser(Player player) {
 		
 		String name = player.getDisplayName();
 		return (userExists(name)) ? (User) collection.get(name) : null;
 	}
 	
+	/**
+	 * Checks to see if a User is a leader of their own nation group.
+	 * 
+	 * @param user The User to check
+	 * @return true if the User is a leader of their own nation group,
+	 * 		   false otherwise
+	 */
 	public Boolean isLeader(User user) {
 		
 		if (plugin.groupManager.groupExists(user.getNation())) {
@@ -42,6 +58,12 @@ public class UserManagement extends Management {
 		return false;
 	}
 	
+	/**
+	 * Creates a User instance for the provided Player; loads that
+	 * instance into 'collection' and saves it to the data source.
+	 * 
+	 * @param player The Player to register
+	 */
 	public void registerUser(Player player) {
 		
 		String name = player.getDisplayName();
@@ -53,7 +75,6 @@ public class UserManagement extends Management {
 			user.setLocationKey(getLocationKey(player.getLocation()));
 			collection.put(name, user);
 			saveObject(name);
-			loadObject(name);
 			user.message("You have been registered for Nations at War!");
 			plugin.sendToLog("User: " + name + " has been registered!");
 		} else {
@@ -61,7 +82,13 @@ public class UserManagement extends Management {
 		}
 	}
 	
-	public void loadUser(Player player) {
+	/**
+	 * Connects a matching User instance with the provided Player, if one 
+	 * exists. Then sets the User up for functionality in the current World.
+	 * 
+	 * @param player The player to match
+	 */
+	public void setupUser(Player player) {
 	
 		User user = getUser(player);
 		
@@ -69,7 +96,7 @@ public class UserManagement extends Management {
 			user.setWorld(plugin.getWorld());
 			user.setPlayer(player);
 			user.setLocationKey(getLocationKey(player.getLocation()));
-			plugin.userManager.saveObject(user.getKey());
+			saveObject(user.getKey());
 			plugin.sendToLog("User: " + user.getKey() + " sucessfully loaded!");
 		} else {
 			
@@ -77,6 +104,12 @@ public class UserManagement extends Management {
 		}
 	}
 	
+	//TODO: Change to User parameter, try to make notifications their own method
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
 	public Boolean updateLocation(Player player) {
 		
 		String name = player.getDisplayName();
@@ -101,7 +134,7 @@ public class UserManagement extends Management {
 					}
 				} else {
 					if (user.getCurrentLocationName() != "") {
-						
+						//TODO: Fix "leaving" bug when connecting to the server
 						player.sendMessage("[Leaving] " + user.getCurrentLocationName());
 						user.setCurrentLocationName("");
 					}

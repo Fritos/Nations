@@ -9,6 +9,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import shizu.bukkit.nations.Nations;
 import shizu.bukkit.nations.object.Plot;
 
+/**
+ * Listener class for all block activity relating to 'Nations at War'
+ * 
+ * @author Shizukesa
+ *
+ */
 public class NationsBlockListener extends BlockListener {
 	
 	private static Nations plugin;
@@ -18,7 +24,7 @@ public class NationsBlockListener extends BlockListener {
 		plugin = instance;
 	}
 	
-	// TODO Permissions: Add single function group/nation permission check, also resale protection
+	// TODO Permissions: Add single function group/nation permission check, also resale protection, PRIORITY!!!!!!!!!!!!!
 	
 	@Override
 	public void onBlockBreak(BlockBreakEvent event) {

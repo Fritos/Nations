@@ -28,13 +28,13 @@ public class NationsUserListener extends PlayerListener {
 		
 		if (plugin.userManager.userExists(name)) {
 			
-			plugin.userManager.loadUser(player);
+			plugin.userManager.setupUser(player);
 		} else {
 			
 			if (REGISTER_ON_JOIN) {
 				
 				plugin.userManager.registerUser(player);
-				plugin.userManager.loadUser(player);
+				plugin.userManager.setupUser(player);
 			} else {
 				player.sendMessage("*** You are not yet registered on the server ***");
 				player.sendMessage("*** NAW functionality will be disabled until you are registered! ***");

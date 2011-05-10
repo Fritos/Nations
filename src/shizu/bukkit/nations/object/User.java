@@ -4,12 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
- * The Nations at War User object. Stores vital User information
- * for use by the server
+ * The Nations at War User object.
  * 
  *  @author Shizukesa
  */
-@SuppressWarnings("serial") //Read up on this!
+@SuppressWarnings("serial")
 public class User extends NAWObject {
 
 	private String key;
@@ -23,25 +22,42 @@ public class User extends NAWObject {
 		player = n;
 		key = n.getDisplayName();
 		nationKey = "";
+		currentLocation = "";
 	}
 	
+	/**
+	 * Sends a message to the User.
+	 * 
+	 * @param message The message to send
+	 */
 	public void message(String message) {
 		
 		player.sendMessage(message);
 	}
 	
+	/**
+	 * Matches this User object with a Player.
+	 * 
+	 * @param p The Player to match this User to
+	 */
 	public void setPlayer(Player p) {
 		
 		player = p;
 	}
 	
+	/**
+	 * Returns the location of the User.
+	 * 
+	 * @return the location of the User
+	 */
 	public Location getLocation() {
 		
 		return player.getLocation();
 	}
 	
 	/**
-	 * Fetches the key (user name)
+	 * Fetches the key (User name).
+	 * 
 	 * @return the key
 	 */
 	public String getKey() {
@@ -50,7 +66,8 @@ public class User extends NAWObject {
 	}
 	
 	/**
-	 * Fetches the nation that the user belongs to
+	 * Fetches the nation that the User belongs to.
+	 * 
 	 * @return the nation
 	 */
 	public String getNation() {
@@ -59,23 +76,29 @@ public class User extends NAWObject {
 	}
 	
 	/**
-	 * Fetches the Plot key id of the plot the user is currently in,
-	 * the value is "" if the user is not in a plot
-	 * @return
+	 * Fetches the location key of the Plot the User is currently in.
+	 * 
+	 * @return the location key
 	 */
 	public String getLocationKey() {
 		
 		return locationKey;
 	}
 	
+	/**
+	 * Fetches the territory title of the User's current location.
+	 * 
+	 * @return the teritory title
+	 */
 	public String getCurrentLocationName() {
 		
 		return currentLocation;
 	}
 	
 	/**
-	 * Sets the Nation the user belongs to
-	 * @param n
+	 * Sets the Nation the User belongs to.
+	 * 
+	 * @param n the new nation
 	 */
 	public void setNation(String n) {
 		
@@ -83,14 +106,20 @@ public class User extends NAWObject {
 	}
 	
 	/**
-	 * Sets the Plot key id of the plot the user is currently in,
-	 * the value is "" if the user is not in a plot
+	 * Sets the location key of the Plot the User is currently in.
+	 * 
+	 * @param l the location key
 	 */
 	public void setLocationKey(String l) {
 		
 		locationKey = l;
 	}
 	
+	/**
+	 * Sets the territory title of the User's current location.
+	 * 
+	 * @param c the territory title
+	 */
 	public void setCurrentLocationName(String c) {
 		
 		currentLocation = c;

@@ -15,7 +15,7 @@ import shizu.bukkit.nations.object.*;
 /**
  * Abstract class to handle data interaction between the server
  * and the data source. The type of data that is being handled is
- * determined by the type of subclass that calls it.
+ * determined by the value of the child's 'type' variable.
  * 
  * @author Shizukesa
  */
@@ -24,7 +24,6 @@ public abstract class Management {
 	// TODO Config: pull from config or something
 	private final Boolean useSql = false;
 	
-	// TODO Collection : Must typecast any value coming out of the map
 	public HashMap<String, NAWObject> collection;
 	protected String type; 
 	protected DataSource database;
@@ -37,10 +36,14 @@ public abstract class Management {
 	}
 	
 	/**
-	 * Returns the Plot identification key for the given location
+	 * Fetches the "location identification key" for a given location. 
+	 * This key is the world 'x' and 'z' coordinates of the chunk that 
+	 * the given location falls within. The chunk coordinates are the
+	 * world coordinates of the top-left most block in the chunk, divided
+	 * by 16. The key is returned in the following format: "x.z" (ex: "-7.13")
 	 * 
-	 * @param loc The Location to create a key for
-	 * @return the newly created identification key
+	 * @param loc The location of the chunk 
+	 * @return the location identification key
 	 */
 	public String getLocationKey(Location loc) {
 		
@@ -51,9 +54,9 @@ public abstract class Management {
 	}
 	
 	/**
-	 * Stores an object from the server to the data source
+	 * Sends an object from the 'collection' to the data source for saving.
 	 * 
-	 * @param key The key identifier of the data to store
+	 * @param key The 'collection' HashMap key of the object to save
 	 */
 	public void saveObject(String key) {
 		
@@ -62,9 +65,11 @@ public abstract class Management {
 	}
 	
 	/**
-	 * Loads an object from the data source to the server
+	 * Fetches an object from the data source and loads it into 
+	 * 'collection'.
 	 * 
-	 * @param key The key identifier of the data to load
+	 * @param key The 'collection' HashMap key of the object to load
+	 * @return true if an object was loaded, false if the object is null
 	 */
 	public Boolean loadObject(String key) {
 		
@@ -81,9 +86,10 @@ public abstract class Management {
 	}
 	
 	/**
-	 * Deletes an object from the data source and the server
+	 * Deletes an object from the data source and removes it from 
+	 * 'collection'.
 	 * 
-	 * @param key The key identifier of the data to delete
+	 * @param key The 'collection' HashMap key of the object to delete
 	 */
 	public void deleteObject(String key) {
 		database.delete(type, key);
@@ -91,7 +97,7 @@ public abstract class Management {
 	}
 	
 	/**
-	 * Stores all objects on the server to the data source
+	 * Sends all objects from 'collection' to the data source for saving.
 	 */
 	public void saveAll() {
 		
@@ -103,7 +109,7 @@ public abstract class Management {
 	}
 	
 	/**
-	 * Loads all objects from the data source to the server
+	 * Fetches all objects from the data source and loads them into 'collection'.
 	 */
 	public void loadAll() {
 		
@@ -117,7 +123,7 @@ public abstract class Management {
 	}
 	
 	/**
-	 * Deletes all object from the data source and server
+	 * Deletes all objects from the data source and removes them from 'collection'.
 	 */
 	public void deleteAll() {
 		
