@@ -16,17 +16,14 @@ import shizu.bukkit.nations.object.User;
  */
 public class UserManagement extends Management {
 
+	//TODO Add to config
+	private final Boolean LOCATION_NOTIFICATION = true;
+	
 	public UserManagement(Nations instance) {
 		
 		super(instance);
 		collection = new HashMap<String, NAWObject>();
 		type = "user";
-	}
-	
-	//TODO: Try moving this method to the parent for abstraction
-	public Boolean userExists(String key) {
-
-		return (collection.containsKey(key)) ? true : false;
 	}
 	
 	/**
@@ -39,7 +36,7 @@ public class UserManagement extends Management {
 	public User getUser(Player player) {
 		
 		String name = player.getDisplayName();
-		return (userExists(name)) ? (User) collection.get(name) : null;
+		return (exists(name)) ? (User) collection.get(name) : null;
 	}
 	
 	/**
@@ -51,8 +48,8 @@ public class UserManagement extends Management {
 	 */
 	public Boolean isLeader(User user) {
 		
-		if (plugin.groupManager.groupExists(user.getNation())) {
-			return (plugin.groupManager.getGroup(user.getNation()).hasLeader(user.getKey())) ? true : false;
+		if (plugin.groupManager.exists(user.getNation())) {
+			return (plugin.groupManager.getGroup(user.getNation()).hasLeader(user.getName())) ? true : false;
 		} 
 		
 		return false;
@@ -68,11 +65,9 @@ public class UserManagement extends Management {
 		
 		String name = player.getDisplayName();
 		
-		if (!userExists(name)) {
+		if (!exists(name)) {
 			
 			User user = new User(player);
-			user.setWorld(plugin.getWorld());
-			user.setLocationKey(getLocationKey(player.getLocation()));
 			collection.put(name, user);
 			saveObject(name);
 			user.message("You have been registered for Nations at War!");
@@ -93,58 +88,69 @@ public class UserManagement extends Management {
 		User user = getUser(player);
 		
 		if (user != null) {
+			String locKey = getLocationKey(player.getLocation());
+			String locDesc = (plugin.plotManager.exists(locKey)) ? plugin.plotManager.getPlot(locKey).getLoctionDescription() : "";
 			user.setWorld(plugin.getWorld());
 			user.setPlayer(player);
-			user.setLocationKey(getLocationKey(player.getLocation()));
-			saveObject(user.getKey());
-			plugin.sendToLog("User: " + user.getKey() + " sucessfully loaded!");
+			user.setLocationKey(locKey);
+			user.setCurrentLocationDescription(locDesc); 
+			collection.put(user.getName(), user);
+			saveObject(user.getName());
+			plugin.sendToLog("User: " + user.getName() + " sucessfully loaded!");
 		} else {
 			
 			plugin.sendToLog("Error loading user: " + player.getDisplayName());
 		}
 	}
 	
-	//TODO: Change to User parameter, try to make notifications their own method
 	/**
+	 * Detects when a User has moved to a new chunk and updates
+	 * their location data.
 	 * 
-	 * @param player
-	 * @return
+	 * @param user The User to update
+	 * @return true if the location data was updated, false otherwise
 	 */
-	public Boolean updateLocation(Player player) {
+	public Boolean updateLocation(User user) {
 		
-		String name = player.getDisplayName();
+		String locKey = plugin.plotManager.getLocationKey(user.getLocation());
 		
-		//if registered user
-		if (userExists(name)) {
+		if (!user.getLocationKey().equals(locKey)) {
 			
-			User user = getUser(player);
-			String locKey = plugin.plotManager.getLocationKey(player.getLocation());
-			
-			//if registered user moved to a new chunk
-			if (!user.getLocationKey().equals(locKey)) {
-				
-				if (plugin.plotManager.plotExists(locKey)) {
-					
-					String locName = plugin.plotManager.getPlot(locKey).getLoctionName();
-					
-					if (!user.getCurrentLocationName().equals(locName)) {
-						
-						user.setCurrentLocationName(locName);
-						player.sendMessage("[Entering] " + locName);
-					}
-				} else {
-					if (user.getCurrentLocationName() != "") {
-						//TODO: Fix "leaving" bug when connecting to the server
-						player.sendMessage("[Leaving] " + user.getCurrentLocationName());
-						user.setCurrentLocationName("");
-					}
-				}
-				
-				user.setLocationKey(locKey);
-				return true;
+			if (LOCATION_NOTIFICATION) {
+				updateLocationDescription(user, locKey);
 			}
+			
+			user.setLocationKey(locKey);
+			return true;
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Detects when a User has moved into a new region. Then updates
+	 * and notifies the User of their current regional location.
+	 * 
+	 * @param user The User to update
+	 * @param locKey The location key of the User's current plot
+	 */
+	public void updateLocationDescription(User user, String locKey) {
+		
+		if (plugin.plotManager.exists(locKey)) {
+			
+			String locName = plugin.plotManager.getPlot(locKey).getLoctionDescription();
+			
+			if (!user.getCurrentLocationDescription().equals(locName)) {
+				
+				user.setCurrentLocationDescription(locName);
+				user.message("[Entering] " + locName);
+			}
+		} else {
+			if (user.getCurrentLocationDescription() != "") {
+				
+				user.message("[Leaving] " + user.getCurrentLocationDescription());
+				user.setCurrentLocationDescription("");
+			}
+		}
 	}
 }

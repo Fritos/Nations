@@ -19,18 +19,13 @@ import shizu.bukkit.nations.object.User;
 public class PlotManagement extends Management {
 	
 	//TODO: Add config toggle to allow players not associated with a nation to claim/edit plots
-	//TODO: buy plot, check if new claim is an 'outpost'
+	//TODO: buy plot, rent plot, check if new claim is an 'outpost'
 	
 	public PlotManagement(Nations instance) {
 		
 		super(instance);
 		collection = new HashMap<String, NAWObject>();
 		type = "plot";
-	}
-	//TODO: Try moving this method to the parent for abstraction
-	public Boolean plotExists(String key) {
-
-		return (collection.containsKey(key)) ? true : false;
 	}
 	
 	/**
@@ -42,7 +37,7 @@ public class PlotManagement extends Management {
 	 */
 	public Plot getPlot(String key) {
 		
-		return (plotExists(key)) ? (Plot) collection.get(key) : null;
+		return (exists(key)) ? (Plot) collection.get(key) : null;
 	}
 	
 	/**
@@ -70,7 +65,7 @@ public class PlotManagement extends Management {
 	public Plot getPlotAtUser(User user) {
 		
 		Plot plot = getPlot(user.getLocationKey());
-		if (plot == null) { plugin.sendToLog("No plot found at " + user.getKey() + "'s location"); }
+		if (plot == null) { plugin.sendToLog("No plot found at " + user.getName() + "'s location"); }
 		return plot;
 	}
 	
@@ -86,7 +81,7 @@ public class PlotManagement extends Management {
 		
 		String locKey = user.getLocationKey();
 
-		if (plotExists(locKey)) { 
+		if (exists(locKey)) { 
 			
 			user.message("This plot has already been claimed!");
 			return false; 
@@ -98,6 +93,7 @@ public class PlotManagement extends Management {
 			Plot plot = new Plot(plugin.getWorld(), (int) loc.getX(), (int) loc.getZ());
 			plot.setOwner(user.getNation());
 			collection.put(locKey, plot);
+			user.setCurrentLocationDescription(plot.getLoctionDescription());
 			saveObject(locKey);
 			plugin.groupManager.getGroup(user.getNation()).addPlot(locKey);
 			showBoundaries(plot);
@@ -123,7 +119,7 @@ public class PlotManagement extends Management {
 		String locKey = user.getLocationKey();
 		Plot plot = getPlotAtUser(user);
 		
-		if (!plotExists(locKey)) {
+		if (!exists(locKey)) {
 			
 			user.message("No plot exists here to raze!");
 			return false;
@@ -134,7 +130,7 @@ public class PlotManagement extends Management {
 			collection.remove(locKey);
 			deleteObject(locKey);
 			plugin.groupManager.getGroup(user.getNation()).removePlot(locKey);
-			user.setCurrentLocationName("");
+			user.setCurrentLocationDescription("");
 			user.message("Plot at " + locKey + " razed!");
 			return true;
 			
@@ -158,7 +154,7 @@ public class PlotManagement extends Management {
 		String locKey = user.getLocationKey();
 		Plot plot = getPlotAtUser(user);
 		
-		if (!plotExists(locKey)) {
+		if (!exists(locKey)) {
 			
 			user.message("No plot exists here to resell!");
 			return false;
@@ -197,17 +193,17 @@ public class PlotManagement extends Management {
 		String locKey = user.getLocationKey();
 		Plot plot = getPlotAtUser(user);
 		
-		if (!plotExists(locKey)) {
+		if (!exists(locKey)) {
 			
 			user.message("No plot exists here to set the region name of!");
 			return false;
 		}
 		
-		if (plugin.userManager.isLeader(user) && plot.getOwner() == user.getNation()) {
+		if (plugin.userManager.isLeader(user) && plot.getOwner().equals(user.getNation())) {
 			
 			plot.setRegion(region);
 			saveObject(locKey);
-			user.setCurrentLocationName(plot.getLoctionName());
+			user.setCurrentLocationDescription(plot.getLoctionDescription());
 			user.message("Plot at " + locKey + " is now in region: " + region);
 			return true;
 		} else {

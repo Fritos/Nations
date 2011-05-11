@@ -36,6 +36,17 @@ public abstract class Management {
 	}
 	
 	/**
+	 * Finds whether an object exists in 'collection'.
+	 * 
+	 * @param key The 'collection' HashMap key of the object to find
+	 * @return true if the object exists, false otherwise
+	 */
+	public Boolean exists(String key) {
+		
+		return (collection.containsKey(key)) ? true : false;
+	}
+	
+	/**
 	 * Fetches the "location identification key" for a given location. 
 	 * This key is the world 'x' and 'z' coordinates of the chunk that 
 	 * the given location falls within. The chunk coordinates are the

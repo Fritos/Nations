@@ -66,9 +66,9 @@ public class Nations extends JavaPlugin {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 		
-		// TODO Commands: Make this not suck
+		// TODO: Make this not suck
 		String name = ((Player) sender).getDisplayName();
-		User user = (userManager.userExists(name)) ? userManager.getUser((Player) sender) : null;
+		User user = (userManager.exists(name)) ? userManager.getUser((Player) sender) : null;
 		
 		if (user != null) {
 			

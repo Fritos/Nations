@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import shizu.bukkit.nations.Nations;
+import shizu.bukkit.nations.object.User;
 
 public class NationsUserListener extends PlayerListener {
 	
@@ -26,7 +27,7 @@ public class NationsUserListener extends PlayerListener {
 		Player player = event.getPlayer();
 		String name = player.getDisplayName();
 		
-		if (plugin.userManager.userExists(name)) {
+		if (plugin.userManager.exists(name)) {
 			
 			plugin.userManager.setupUser(player);
 		} else {
@@ -47,7 +48,6 @@ public class NationsUserListener extends PlayerListener {
 		
 		String name = event.getPlayer().getDisplayName();
 		plugin.userManager.saveObject(name);
-		plugin.userManager.collection.remove(name);
 	}
 
 	@Override
@@ -55,12 +55,17 @@ public class NationsUserListener extends PlayerListener {
 
 		String name = event.getPlayer().getDisplayName();
 		plugin.userManager.saveObject(name);
-		plugin.userManager.collection.remove(name);
 	}
 	
 	@Override
 	public void onPlayerMove(PlayerMoveEvent event) {
 		
-		plugin.userManager.updateLocation(event.getPlayer());
+		Player player = event.getPlayer();
+		
+		if (plugin.userManager.exists(player.getDisplayName())) {
+		
+			User user = plugin.userManager.getUser(player);
+			plugin.userManager.updateLocation(user);
+		}
 	}
 }

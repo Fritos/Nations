@@ -22,12 +22,6 @@ public class GroupManagement extends Management {
 		type = "group";
 	}
 	
-	//TODO: Try moving this method to the parent for abstraction
-	public Boolean groupExists(String key) {
-
-		return (collection.containsKey(key)) ? true : false;
-	}
-	
 	/**
 	 * Fetches the Group for the provided group name, if it exists.
 	 * 
@@ -36,7 +30,7 @@ public class GroupManagement extends Management {
 	 */
 	public Group getGroup(String key) {
 
-		return (groupExists(key)) ? (Group) collection.get(key) : null;
+		return (exists(key)) ? (Group) collection.get(key) : null;
 	}
 	
 	/**
@@ -49,13 +43,13 @@ public class GroupManagement extends Management {
 	public void foundNation(User user, String name) {
 		
 		// TODO: Case sensitive check on nation name
-		if (!groupExists(name)) {
+		if (!exists(name)) {
 			
 			if (user.getNation().equals("")) {
 				
 				Group group = new Group(name);
-				group.addMember(user.getKey());
-				group.addLeader(user.getKey());
+				group.addMember(user.getName());
+				group.addLeader(user.getName());
 				user.setNation(name);
 				collection.put(name, group);
 				saveObject(name);
@@ -68,4 +62,18 @@ public class GroupManagement extends Management {
 		}
 		
 	}
+	
+	public void messageGroup() {
+		
+	}
+	
+	public void createGroup() {
+		
+	}
+	
+	public void deleteGroup() {
+		
+	}
+	
+	
 }

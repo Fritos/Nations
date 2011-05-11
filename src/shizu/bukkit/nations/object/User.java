@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 @SuppressWarnings("serial")
 public class User extends NAWObject {
 
-	private String key;
+	private String name;
 	private String nationKey;
 	private String locationKey;
 	private String currentLocation;
@@ -20,7 +20,7 @@ public class User extends NAWObject {
 	public User(Player n) {
 		
 		player = n;
-		key = n.getDisplayName();
+		name = n.getDisplayName();
 		nationKey = "";
 		currentLocation = "";
 	}
@@ -56,13 +56,13 @@ public class User extends NAWObject {
 	}
 	
 	/**
-	 * Fetches the key (User name).
+	 * Fetches the User's name.
 	 * 
 	 * @return the key
 	 */
-	public String getKey() {
+	public String getName() {
 		
-		return key;
+		return name;
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class User extends NAWObject {
 	 * 
 	 * @return the teritory title
 	 */
-	public String getCurrentLocationName() {
+	public String getCurrentLocationDescription() {
 		
 		return currentLocation;
 	}
@@ -120,7 +120,7 @@ public class User extends NAWObject {
 	 * 
 	 * @param c the territory title
 	 */
-	public void setCurrentLocationName(String c) {
+	public void setCurrentLocationDescription(String c) {
 		
 		currentLocation = c;
 	}

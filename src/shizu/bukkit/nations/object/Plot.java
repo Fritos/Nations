@@ -124,7 +124,7 @@ public class Plot extends NAWObject implements Chunk {
 	 * 
 	 * @return the plots display name
 	 */
-	public String getLoctionName() {
+	public String getLoctionDescription() {
 		
 		String territory = (region == "") ? "territory" : region;
 		return owner + "'s " + territory;

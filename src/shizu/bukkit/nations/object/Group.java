@@ -74,6 +74,12 @@ public class Group extends NAWObject {
 		return (members.contains(name)) ? true : false;
 	}
 	
+	/**
+	 * Checks to see if a User is a leader of this group/nation.
+	 * 
+	 * @param name The name of the User to check
+	 * @return true if the User was found, false otherwise
+	 */
 	public Boolean hasLeader(String name) {
 		
 		return (leaders.contains(name)) ? true : false;
@@ -110,6 +116,11 @@ public class Group extends NAWObject {
 		return members;
 	}
 	
+	/**
+	 * Returns all leaders associated with this group.
+	 * 
+	 * @return leader's User names
+	 */
 	public ArrayList<String> getLeaders() {
 		
 		return leaders;
