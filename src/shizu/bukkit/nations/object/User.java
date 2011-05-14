@@ -1,5 +1,7 @@
 package shizu.bukkit.nations.object;
 
+import java.util.ArrayList;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -15,6 +17,7 @@ public class User extends NAWObject {
 	private String nationKey;
 	private String locationKey;
 	private String currentLocation;
+	private ArrayList<String> nationInvites;
 	private transient Player player;
 	
 	public User(Player n) {
@@ -23,6 +26,47 @@ public class User extends NAWObject {
 		name = n.getDisplayName();
 		nationKey = "";
 		currentLocation = "";
+		nationInvites = new ArrayList<String>();
+	}
+	
+	public void addInvite(String nation) {
+		
+		nationInvites.add(nation);
+		message("You have been invited to join " + nation + "!");
+		message("Type: '/naw invites accept " + nation + "' to join");
+	}
+	
+	public void clearInvites() {
+		
+		nationInvites.clear();
+	}
+	
+	//TODO: bug, does not work
+	public void viewInvites() {
+		
+		if (hasInvites()) {
+			String invites = "";
+			
+			for (String nation : nationInvites) {
+				
+				invites += nation + " ";
+			}
+			
+			message("You have been invited to join: " + invites);
+			message("Type: '/naw invites accept <nation name>' to join that nation!");
+		} else {
+			message("You have no invites!");
+		}
+	}
+	
+	public Boolean hasInvite(String nation) {
+		
+		return nationInvites.contains(nation);
+	}
+	
+	public Boolean hasInvites() {
+		
+		return !nationInvites.isEmpty();
 	}
 	
 	/**

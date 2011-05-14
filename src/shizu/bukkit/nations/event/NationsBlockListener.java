@@ -6,6 +6,7 @@ import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import shizu.bukkit.nations.Nations;
+import shizu.bukkit.nations.object.Group;
 import shizu.bukkit.nations.object.Plot;
 import shizu.bukkit.nations.object.User;
 
@@ -24,16 +25,41 @@ public class NationsBlockListener extends BlockListener {
 		plugin = instance;
 	}
 	
+	
+	public Boolean canBuild(Plot plot, User user) {
+			
+			//TODO: add check for ally, enemy, war, etc.
+		
+			if (plot.getOwner().equals(user.getNation())) {
+				
+				if (plot.getRenter().equals("")) {
+					
+					return true;
+				} else {
+					
+					Group group = plugin.groupManager.getGroup(plot.getOwner());
+					
+					if (plot.getRenter().equals(user.getName()) || 
+						group.hasLeader(user.getName())) {
+						
+						return true;
+					}
+				}
+				
+			}
+			
+		return false;
+	}
+	
 	@Override
 	public void onBlockBreak(BlockBreakEvent event) {
 		
 		User user = plugin.userManager.getUser(event.getPlayer());
 		Plot plot = plugin.plotManager.getPlotAtLocation(event.getBlock().getLocation());
-		
-		
-		if (plot != null && !plot.getOwner().equals(user.getNation())) {
+
+		if (!canBuild(plot, user)) {
 			event.setCancelled(true);
-			plugin.sendToLog("BlockBreak Canceled!");
+			plugin.sendToLog("BlockBreak Canceled! " + user.getName() + " in " + plot.getLocationKey());
 		}
 	}
 	
@@ -43,10 +69,9 @@ public class NationsBlockListener extends BlockListener {
 		User user = plugin.userManager.getUser(event.getPlayer());
 		Plot plot = plugin.plotManager.getPlotAtLocation(event.getBlock().getLocation());
 		
-		
-		if (plot != null && !plot.getOwner().equals(user.getNation())) {
+		if (!canBuild(plot, user)) {
 			event.setCancelled(true);
-			plugin.sendToLog("BlockDamage Canceled!");
+			plugin.sendToLog("BlockDamage Canceled! " + user.getName() + " in " + plot.getLocationKey());
 		}
 	}
 	
@@ -56,10 +81,9 @@ public class NationsBlockListener extends BlockListener {
 		User user = plugin.userManager.getUser(event.getPlayer());
 		Plot plot = plugin.plotManager.getPlotAtLocation(event.getBlock().getLocation());
 		
-		
-		if (plot != null && !plot.getOwner().equals(user.getNation())) {
+		if (!canBuild(plot, user)) {
 			event.setCancelled(true);
-			plugin.sendToLog("BlockPlace Canceled!");
+			plugin.sendToLog("BlockPlace Canceled! " + user.getName() + " in " + plot.getLocationKey());
 		}
 	}
 }

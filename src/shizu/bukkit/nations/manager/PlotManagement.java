@@ -18,8 +18,7 @@ import shizu.bukkit.nations.object.User;
  */
 public class PlotManagement extends Management {
 	
-	//TODO: Add config toggle to allow players not associated with a nation to claim/edit plots
-	//TODO: buy plot, rent plot, check if new claim is an 'outpost'
+	//TODO: check if new claim is an 'outpost'
 	
 	public PlotManagement(Nations instance) {
 		
@@ -93,7 +92,7 @@ public class PlotManagement extends Management {
 			Plot plot = new Plot(plugin.getWorld(), (int) loc.getX(), (int) loc.getZ());
 			plot.setOwner(user.getNation());
 			collection.put(locKey, plot);
-			user.setCurrentLocationDescription(plot.getLoctionDescription());
+			plugin.userManager.setLocationDescriptionForAll(locKey);
 			saveObject(locKey);
 			plugin.groupManager.getGroup(user.getNation()).addPlot(locKey);
 			showBoundaries(plot);
@@ -105,6 +104,66 @@ public class PlotManagement extends Management {
 			user.message("You must be the leader of a nation to claim a plot!");
 			return false;
 		}
+	}
+	
+	/**
+	 * Purchases or rents a Plot for the commanding User
+	 * 
+	 * @param user The user purchasing the Plot
+	 * @return true if the Plot was purchased, false otherwise
+	 */
+	public Boolean buyPlot(User user) {
+		
+		String locKey = user.getLocationKey();
+		Plot plot = getPlotAtUser(user);
+		
+		if (!exists(locKey)) {
+			
+			user.message("No plot exists here to buy!");
+			return false;
+		}
+			
+		if (plot.getRentStatus()) {
+			
+			if (plot.getOwner().equals(user.getNation())) {
+				
+				plot.setRenter(user.getName());
+				saveObject(plot.getLocationKey());
+				plot.toggleRentStatus();
+				showBoundaries(plot);
+				plugin.userManager.setLocationDescriptionForAll(locKey);
+				user.message("Plot at " + locKey + " is now being rented!");
+				//TODO: Alert the plot's owner
+				return true;
+			} else {
+				
+				user.message("You can only rent plots offered from your own nation!");
+				return false;
+			}
+		}
+		
+		if (plot.getSaleStatus()) {
+			
+			if (plot.getOwner().equals(user.getNation())) {
+			
+				user.message("Your nation already owns this land!");
+				return false;
+			}
+			
+			plot.setOwner(user.getNation());
+			plot.setRenter("");
+			plot.setRegion("");
+			saveObject(plot.getLocationKey());
+			plot.toggleSaleStatus();
+			showBoundaries(plot);
+			plugin.userManager.setLocationDescriptionForAll(locKey);
+			user.message("Plot at " + locKey + " has been purchased!");
+			//TODO: Alert the plot's previous owner
+			return true;
+		}
+		
+		user.message("This plot is not available for purchase!");
+		return false;
 	}
 	
 	/**
@@ -129,7 +188,7 @@ public class PlotManagement extends Management {
 			
 			collection.remove(locKey);
 			deleteObject(locKey);
-			plugin.groupManager.getGroup(user.getNation()).removePlot(locKey);
+			plugin.userManager.setLocationDescriptionForAll(locKey);
 			user.setCurrentLocationDescription("");
 			user.message("Plot at " + locKey + " razed!");
 			return true;
@@ -162,9 +221,9 @@ public class PlotManagement extends Management {
 		
 		if (plugin.userManager.isLeader(user) && plot.getOwner().equals(user.getNation())) {
 			
-			plot.setSaleStatus(!plot.getSaleStatus());
+			plot.toggleSaleStatus();
 			showBoundaries(plot);
-			
+			if (plot.getRentStatus()) { plot.toggleRentStatus(); }
 			if (plot.getSaleStatus()) {
 				user.message("Plot at " + locKey + " is now for sale!");
 			} else {
@@ -172,10 +231,47 @@ public class PlotManagement extends Management {
 			}
 			
 			return true;
-			
 		} else {
 			
 			user.message("You must be the leader of this nation to resell this plot!");
+			return false;
+		}
+	}
+	
+	/**
+	 * Flags a Plot as being available for rent by the commanding
+	 * User/Nation.
+	 * 
+	 * @param user The User renting out the Plot
+	 * @return true if the Plot rent status was toggled, false
+	 * 		   otherwise
+	 */
+	public Boolean rentPlot(User user) {
+		
+		String locKey = user.getLocationKey();
+		Plot plot = getPlotAtUser(user);
+		
+		if (!exists(locKey)) {
+			
+			user.message("No plot exists here to rent!");
+			return false;
+		}
+		
+		if (plugin.userManager.isLeader(user) && plot.getOwner().equals(user.getNation())) {
+			
+			plot.toggleRentStatus();
+			showBoundaries(plot);
+			if (plot.getSaleStatus()) { plot.toggleSaleStatus(); }
+			if (plot.getRentStatus()) {
+				user.message("Plot at " + locKey + " is now available for rent!");
+			} else {
+				user.message("Plot at " + locKey + " is no longer available for rent!");
+			}
+			
+			return true;
+		} else {
+			
+			user.message("You must be the leader of this nation to rent this plot!");
 			return false;
 		}
 	}
@@ -203,7 +299,7 @@ public class PlotManagement extends Management {
 			
 			plot.setRegion(region);
 			saveObject(locKey);
-			user.setCurrentLocationDescription(plot.getLoctionDescription());
+			plugin.userManager.setLocationDescriptionForAll(locKey);
 			user.message("Plot at " + locKey + " is now in region: " + region);
 			return true;
 		} else {
@@ -215,7 +311,7 @@ public class PlotManagement extends Management {
 	
 	/**
 	 * Creates torches at the plot's corners to signify its boundaries. If the Plot
-	 * is for sale, redstone torches are created instead.
+	 * is for sale or rent, redstone torches are created instead.
 	 * 
 	 * @param plot The Plot who's boundaries will be created/shown
 	 */
@@ -224,12 +320,11 @@ public class PlotManagement extends Management {
 		World world = plot.getWorld();
 		int x = plot.getX();
 		int z = plot.getZ();
-		int id;
+		int id = 50;
 		
-		if (plot.getSaleStatus() == false) {
-			id = 50; //torch
-		} else {
-			id = 76; //redstone torch
+		if (plot.getSaleStatus() || plot.getRentStatus()) {
+			
+			id = 76; //redstone torch lit
 		}
 		
 		world.getBlockAt(x * 16, world.getHighestBlockYAt(x * 16, z * 16), z * 16).setTypeId(id);

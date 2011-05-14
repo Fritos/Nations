@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import shizu.bukkit.nations.Nations;
 import shizu.bukkit.nations.object.NAWObject;
+import shizu.bukkit.nations.object.Plot;
 import shizu.bukkit.nations.object.User;
 
 /**
@@ -15,9 +16,6 @@ import shizu.bukkit.nations.object.User;
  * @author Shizukesa
  */
 public class UserManagement extends Management {
-
-	//TODO Add to config
-	private final Boolean LOCATION_NOTIFICATION = true;
 	
 	public UserManagement(Nations instance) {
 		
@@ -36,6 +34,18 @@ public class UserManagement extends Management {
 	public User getUser(Player player) {
 		
 		String name = player.getDisplayName();
+		return (exists(name)) ? (User) collection.get(name) : null;
+	}
+	
+	/**
+	 * Fetches the User instance for the provided Player, if it exists
+	 * 
+	 * @param name The Player name to fetch for
+	 * @return the User instance of the provided player, null if no
+	 * 		   matching instance exists
+	 */
+	public User getUser(String name) {
+		
 		return (exists(name)) ? (User) collection.get(name) : null;
 	}
 	
@@ -96,10 +106,34 @@ public class UserManagement extends Management {
 			user.setCurrentLocationDescription(locDesc); 
 			collection.put(user.getName(), user);
 			saveObject(user.getName());
+			
+			if (user.hasInvites()) {
+				user.message("You have nation invites!");
+				user.message("Type: '/naw invites' to see the nation(s) you've been invited to!");
+			}
 			plugin.sendToLog("User: " + user.getName() + " sucessfully loaded!");
 		} else {
 			
 			plugin.sendToLog("Error loading user: " + player.getDisplayName());
+		}
+	}
+	
+	public Boolean acceptInvite(User user, String nation) {
+		
+		if (!plugin.groupManager.exists(nation)) {
+			user.message("That nation does not exist or no longer exists!");
+			return false;
+		}	
+		
+		if (user.hasInvite(nation)) {
+			
+			plugin.groupManager.messageGroup(nation, user.getName() + " has joined " + nation + "!");
+			plugin.groupManager.joinNation(user, nation);
+			user.clearInvites();
+			return true;
+		} else {
+			user.message("You have not been invited to join that nation!");
+			return false;
 		}
 	}
 	
@@ -116,15 +150,30 @@ public class UserManagement extends Management {
 		
 		if (!user.getLocationKey().equals(locKey)) {
 			
-			if (LOCATION_NOTIFICATION) {
+			if (Boolean.parseBoolean(plugin.properties.getProperty("location_spam"))) {
 				updateLocationDescription(user, locKey);
 			}
-			
+
+			updateResaleDescription(user, locKey);
 			user.setLocationKey(locKey);
 			return true;
 		}
 		
 		return false;
+	}
+	
+	//TODO: find a more efficient way
+	public void setLocationDescriptionForAll(String locKey) {
+		
+		for (String player : collection.keySet()) {
+			
+			User user = getUser(player);
+			
+			if (user.getLocationKey().equals(locKey)) {
+				
+				updateLocationDescription(user, locKey);
+			}
+		}
 	}
 	
 	/**
@@ -151,6 +200,22 @@ public class UserManagement extends Management {
 				user.message("[Leaving] " + user.getCurrentLocationDescription());
 				user.setCurrentLocationDescription("");
 			}
+		}
+	}
+	
+	/**
+	 * Notifies a User if the provided Plot is available for rent or sale
+	 * 
+	 * @param user The user to notify
+	 * @param locKey The location key of the Plot in question
+	 */
+	public void updateResaleDescription(User user, String locKey) {
+		
+		if (plugin.plotManager.exists(locKey)) {
+			
+			Plot plot = plugin.plotManager.getPlot(locKey);
+			if (plot.getRentStatus()) { user.message("[For Rent] "); } //TODO: Add price
+			if (plot.getSaleStatus()) { user.message("[For Sale] "); }
 		}
 	}
 }

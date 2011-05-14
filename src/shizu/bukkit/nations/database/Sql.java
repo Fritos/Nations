@@ -17,16 +17,19 @@ import shizu.bukkit.nations.object.NAWObject;
  */
 public class Sql implements DataSource {
 	
-	private final String SQL_DRIVER = "com.mysql.jdbc.Driver";
-	private final String DB_NAME = "mc_bukkit_naw";
+	private String SQL_DRIVER = "com.mysql.jdbc.Driver";
+	private String DB_NAME;
 	
 	private static Nations plugin;
 	
 	public Sql(Nations instance) {
 		plugin = instance;
-		
-		//Get db connection info from config file, or something
-		initSqlConnection("jdbc:mysql://localhost:3306/", "root", "test");
+		DB_NAME = plugin.properties.getProperty("mysql_db_name");
+		initSqlConnection("jdbc:mysql://" + 
+						  plugin.properties.getProperty("mysql_url") + ":" +
+						  plugin.properties.getProperty("mysql_port"), 
+						  plugin.properties.getProperty("mysql_user"), 
+						  plugin.properties.getProperty("mysql_pass"));
 		//Look for tables and load data if it exists
 	}
 	

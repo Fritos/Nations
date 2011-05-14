@@ -1,5 +1,8 @@
 package shizu.bukkit.nations;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Logger;
 
 import org.bukkit.World;
@@ -9,10 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
-import org.bukkit.plugin.Plugin;
 
 import shizu.bukkit.nations.event.NationsBlockListener;
 import shizu.bukkit.nations.event.NationsUserListener;
@@ -32,7 +31,7 @@ public class Nations extends JavaPlugin {
 
 	private static final Logger log = Logger.getLogger("Minecraft");
 	
-	public static PermissionHandler permissionHandler;
+	public Properties properties = new Properties();
 	public PlotManagement plotManager = new PlotManagement(this);
 	public UserManagement userManager = new UserManagement(this);
 	public GroupManagement groupManager = new GroupManagement(this);
@@ -41,7 +40,14 @@ public class Nations extends JavaPlugin {
     
 	public void onEnable() {
 		
-		setupPermissions();
+		//TODO: create wrapper class for Properties; defaults, detect and create, etc.
+		try {
+		    properties.load(new FileInputStream("plugins\\naw.properties"));
+		    sendToLog("Config file loaded");
+		} catch (IOException e) {
+			sendToLog("Unable to load config file!");
+		}
+		
 		PluginManager pm = getServer().getPluginManager();
 
 		pm.registerEvent(Event.Type.BLOCK_DAMAGE, blockListener, Event.Priority.Normal, this);
@@ -59,6 +65,7 @@ public class Nations extends JavaPlugin {
 	}
 
 	public void onDisable() {
+		
 		plotManager.saveAll();
 		groupManager.saveAll();
 		userManager.saveAll();
@@ -74,6 +81,26 @@ public class Nations extends JavaPlugin {
 			
 			if (commandLabel.equalsIgnoreCase("naw")) {
 				
+				//FOR QUICK TESTING/DEBUGGING
+				if (args[0].equalsIgnoreCase("test")) {
+					
+				}
+				
+				if (args[0].equalsIgnoreCase("invites")) {
+					
+					if (args[1].equalsIgnoreCase("")) {
+						user.viewInvites();
+					}
+					
+					if (args[1].equalsIgnoreCase("accept")) {
+						userManager.acceptInvite(user, args[2]);
+					}
+					
+					if (args[1].equalsIgnoreCase("clear")) {
+						user.clearInvites();
+					}
+				}
+				
 				if (args[0].equalsIgnoreCase("plot")) {
 					
 					if (args[1].equalsIgnoreCase("claim")) {
@@ -84,20 +111,76 @@ public class Nations extends JavaPlugin {
 						plotManager.razePlot(user);
 					}
 					
-					if (args[1].equalsIgnoreCase("resell")) {
+					if (args[1].equalsIgnoreCase("sell")) {
 						plotManager.resellPlot(user);
+					}
+					
+					if (args[1].equalsIgnoreCase("rent")) {
+						plotManager.rentPlot(user);
 					}
 					
 					if (args[1].equalsIgnoreCase("region")) {
 						plotManager.setRegion(user, args[2]);
 					}
+					
+					if (args[1].equalsIgnoreCase("buy")) {
+						plotManager.buyPlot(user);
+					}
 				}
 				
 				if (args[0].equalsIgnoreCase("nation")) {
 					
-					//TODO: error if args[2] does not exist!
 					if (args[1].equalsIgnoreCase("found")) {
 						groupManager.foundNation(user, args[2]);
+					}
+					
+					if (args[1].equalsIgnoreCase("invite")) {
+						groupManager.inviteUserToNation(user, args[2]);
+					}
+					
+					if (args[1].equalsIgnoreCase("kick")) {
+						groupManager.kickUserFromNation(user, args[2]);
+					}
+					
+					//TODO: test
+					if (args[1].equalsIgnoreCase("promote")) {
+						groupManager.promoteUser(user, args[2]);
+					}
+					
+					//TODO: test
+					if (args[1].equalsIgnoreCase("demote")) {
+						groupManager.demoteUser(user, args[2]);
+					}
+					
+					if (args[1].equalsIgnoreCase("leave")) {
+						groupManager.leaveNation(user);
+					}
+					
+					if (args[1].equalsIgnoreCase("disband")) {
+						//PLACEHOLDER - disbands the nation; kick all members, raze all plots, delete object
+					}
+					
+					if (args[1].equalsIgnoreCase("rename")) {
+						//PLACEHOLDER - renames the nation
+					}
+					
+					if (args[1].equalsIgnoreCase("tax")) {
+						//PLACEHOLDER - sets the tax rate for the nation; used for renting/buying plots, maybe more?
+					}
+				}
+				
+				if (args[0].equalsIgnoreCase("diplomacy")) {
+					
+					if (args[1].equalsIgnoreCase("war")) {
+						//PLACEHOLDER - starts a war with the provided nation, allies of both nations are alerted and have the option to join in
+					}
+					
+					if (args[1].equalsIgnoreCase("ally")) {
+						//PLACEHOLDER - requests an alliance with the provided nation. The alliance is not created until both sides type this command
+					}
+					
+					if (args[1].equalsIgnoreCase("gift")) {
+						//PLACEHOLDER - give a plot/iConomy to the provided nation.
 					}
 				}
 			}
@@ -112,24 +195,11 @@ public class Nations extends JavaPlugin {
 		log.info("[NationsAtWar]: " + message);
 	}
 	
-	public World getWorld() {
-		return this.getServer().getWorld("world");
+	public void messageAll(String message) {
+		this.getServer().broadcastMessage("[NationsAtWar]: " + message);
 	}
 	
-	/**
-	 * Tie in with the Permissions plugin
-	 */
-	@SuppressWarnings("static-access")
-	private void setupPermissions() {
-		
-		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
-	
-			if (this.permissionHandler == null) {
-				if (permissionsPlugin != null) {
-					this.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
-				} else {
-					log.info("Permission system not detected, defaulting to OP");
-				}
-			}
-	  	}
+	public World getWorld() {
+		return this.getServer().getWorld(properties.getProperty("world_name"));
+	}
 }

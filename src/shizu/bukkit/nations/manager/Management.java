@@ -21,9 +21,6 @@ import shizu.bukkit.nations.object.*;
  */
 public abstract class Management {
 	
-	// TODO Config: pull from config or something
-	private final Boolean useSql = false;
-	
 	public HashMap<String, NAWObject> collection;
 	protected String type; 
 	protected DataSource database;
@@ -32,7 +29,7 @@ public abstract class Management {
 	public Management(Nations instance) {
 		
 		plugin = instance;
-		database = (DataSource) (useSql ? new Sql(plugin) : new FlatFile(plugin));
+		database = (DataSource) (Boolean.parseBoolean(plugin.properties.getProperty("use_mysql")) ? new Sql(plugin) : new FlatFile(plugin));
 	}
 	
 	/**
@@ -116,7 +113,7 @@ public abstract class Management {
 			saveObject(key.toString());
 		}
 		
-		plugin.sendToLog(String.valueOf(collection.size()) +  " " + type + "s saved!"); 
+		plugin.sendToLog(String.valueOf(collection.size()) +  " " + type + "s saved"); 
 	}
 	
 	/**
@@ -130,7 +127,7 @@ public abstract class Management {
 			loadObject(key);
 		}
 		
-		plugin.sendToLog(String.valueOf(collection.size()) +  " " + type + "s loaded!");
+		plugin.sendToLog(String.valueOf(collection.size()) +  " " + type + "s loaded");
 	}
 	
 	/**

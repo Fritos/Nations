@@ -97,11 +97,11 @@ public class Group extends NAWObject {
 	}
 	
 	/**
-	 * Returns the key of this group/nation (group name).
+	 * Returns the name of this group/nation.
 	 * 
 	 * @return the group/nation name
 	 */
-	public String getKey() {
+	public String getName() {
 		
 		return name;
 	}

@@ -14,36 +14,40 @@ import org.bukkit.entity.Entity;
 @SuppressWarnings("serial")
 public class Plot extends NAWObject implements Chunk {
 
-	private final String key; //Key used as hash map reference
+	private final String locationKey;
 	private final int worldX;
 	private final int worldZ;
 	private String region;
 	private String owner;
+	private String renter;
 	private Boolean forSale;
+	private Boolean forRent;
 	
 	public Plot(World w, int x, int z) {
 		
 		world = w;
 		worldX = w.getBlockAt(x, 0, z).getChunk().getX();
 		worldZ = w.getBlockAt(x, 0, z).getChunk().getZ();
-		key = worldX + "." + worldZ;
+		locationKey = worldX + "." + worldZ;
 		region = "";
 		owner = "";
+		renter = "";
 		forSale = false;
+		forRent = false;
 	}
 	
 	/**
-	 * Returns the location key for this Plot (X.Y)
+	 * Returns the location key for this Plot (X.Y).
 	 * 
 	 * @return the location key of this Plot
 	 */
-	public String getKey() {
+	public String getLocationKey() {
 		
-		return key;
+		return locationKey;
 	}
 
 	/**
-	 * Returns the chunk x-coordinate of this Plot
+	 * Returns the chunk x-coordinate of this Plot.
 	 * 
 	 * @see org.bukkit.Chunk#getX()
 	 */
@@ -54,7 +58,7 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Returns the chunk z-coordinate of this Plot
+	 * Returns the chunk z-coordinate of this Plot.
 	 * 
 	 * @see org.bukkit.Chunk#getZ()
 	 */
@@ -65,7 +69,7 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Returns the Block from the relative Plot coordinates
+	 * Returns the Block from the relative Plot coordinates.
 	 * 
 	 * @see org.bukkit.Chunk#getBlock(int, int, int)
 	 */
@@ -90,7 +94,7 @@ public class Plot extends NAWObject implements Chunk {
     }
 	
 	/**
-	 * Returns the name of this Plot's region
+	 * Returns the name of this Plot's region.
 	 * 
 	 * @return the region name
 	 */
@@ -100,7 +104,7 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Returns the name of this Plot's owner
+	 * Returns the name of this Plot's owner.
 	 * 
 	 * @return the owner name (User/nation)
 	 */
@@ -110,7 +114,17 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Returns the "for sale" status of this Plot
+	 * Returns the name of the Plot's renter.
+	 * 
+	 * @return the renter name
+	 */
+	public String getRenter() {
+		
+		return renter;
+	}
+	
+	/**
+	 * Returns the "for sale" status of this Plot.
 	 * 
 	 * @return true if the Plot is for sale, false otherwise
 	 */
@@ -120,18 +134,31 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Returns the owner + region display name of this Plot
+	 * Returns the "for rent" status of this Plot.
+	 * 
+	 * @return true if the Plot is for rent, false otherwise
+	 */
+	public Boolean getRentStatus() {
+		
+		return forRent;
+	}
+	
+	/**
+	 * Returns the owner + region display name of this Plot.
 	 * 
 	 * @return the plots display name
 	 */
 	public String getLoctionDescription() {
 		
-		String territory = (region == "") ? "territory" : region;
-		return owner + "'s " + territory;
+		String prefix = (renter.equals("")) ? owner : owner + ", " + renter;
+		String suffix = (region.equals("")) ? "territory" : region;
+		return prefix + "'s " + suffix;
 	}
 	
 	/**
-	 * Sets the name of this Plot's region
+	 * Sets the name of this Plot's region.
+	 * 
+	 * @param newRegion The name of the new region
 	 */
 	public void setRegion(String newRegion) {
 		
@@ -139,7 +166,9 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Sets the name of this Plot's owner
+	 * Sets the name of this Plot's owner.
+	 * 
+	 * @param newOwner The name of the new owner
 	 */
 	public void setOwner(String newOwner) {
 		
@@ -147,10 +176,28 @@ public class Plot extends NAWObject implements Chunk {
 	}
 	
 	/**
-	 * Sets the "for sale" status of this Plot
+	 * Sets the name of this Plot's renter.
+	 * 
+	 * @param newRenter The name of the new renter
 	 */
-	public void setSaleStatus(Boolean saleStatus) {
+	public void setRenter(String newRenter) {
 		
-		forSale = saleStatus;
+		renter = newRenter;
+	}
+	
+	/**
+	 * Sets the "for sale" status of this Plot.
+	 */
+	public void toggleSaleStatus() {
+		
+		forSale = !forSale;
+	}
+	
+	/**
+	 * Sets the "for rent" status of this Plot.
+	 */
+	public void toggleRentStatus() {
+		
+		forRent = !forRent;
 	}
 }

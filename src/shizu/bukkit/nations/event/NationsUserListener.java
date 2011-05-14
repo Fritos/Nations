@@ -12,8 +12,6 @@ import shizu.bukkit.nations.object.User;
 
 public class NationsUserListener extends PlayerListener {
 	
-	// TODO Config: pull this data from config
-	private final Boolean REGISTER_ON_JOIN = true;
 	private Nations plugin;
 	
 	public NationsUserListener(Nations instance) {
@@ -32,7 +30,7 @@ public class NationsUserListener extends PlayerListener {
 			plugin.userManager.setupUser(player);
 		} else {
 			
-			if (REGISTER_ON_JOIN) {
+			if (Boolean.parseBoolean(plugin.properties.getProperty("auto_registration"))) {
 				
 				plugin.userManager.registerUser(player);
 				plugin.userManager.setupUser(player);
