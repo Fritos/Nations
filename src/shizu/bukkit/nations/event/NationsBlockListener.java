@@ -28,7 +28,8 @@ public class NationsBlockListener extends BlockListener {
 	
 	public Boolean canBuild(Plot plot, User user) {
 			
-			//TODO: add check for ally, enemy, war, etc.
+		//TODO: add check for ally, enemy, war, etc.
+		if (plot != null) {
 		
 			if (plot.getOwner().equals(user.getNation())) {
 				
@@ -47,7 +48,9 @@ public class NationsBlockListener extends BlockListener {
 				}
 				
 			}
-			
+		} else {
+			return true;
+		}
 		return false;
 	}
 	

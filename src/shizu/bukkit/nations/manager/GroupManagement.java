@@ -63,6 +63,41 @@ public class GroupManagement extends Management {
 		
 	}
 	
+	/**
+	 * Changes diplomatic relationship with another nation.
+	 * 
+	 * @param user The User changing the diplomacy of his nation
+	 * @param nation The Nation the user wants to change his diplomacy with
+	 * @param status The status of the diplomatic relationship (ally, neutral, enemy)
+	 */
+	public void changeStatus(User user, String nation, String status) {
+		Group group = getGroup(user.getNation());
+		
+		if (this.exists(nation) == true) {
+			
+			if (status.equalsIgnoreCase("ally")) {
+				group.addAlly(nation);
+				user.message(nation + " is now your ally.");
+			}
+			else if (status.equalsIgnoreCase("neutral")) {
+				group.addNeutral(nation);
+				user.message(nation + " is now neutral.");
+			}
+			else if (status.equalsIgnoreCase("enemy")) {
+				group.addEnemy(nation);
+				user.message(nation + " is now your enemy.");
+			}
+			else {
+				user.message("Status parameters: 'ally', 'neutral', and 'enemy'");
+				user.message("For example, '/naw diplomacy status Kentucky enemy'");
+			}
+		}
+		
+		else {
+			user.message(nation + " does not exist.");
+		}
+	}
+	
 	public Boolean inviteUserToNation(User user, String invited) {
 		
 		if (!plugin.userManager.exists(invited)) {
@@ -121,13 +156,45 @@ public class GroupManagement extends Management {
 		}
 	}
 	
-	//TODO: test
+	//TODO: test	
+	/**
+	 * Allows leaders to promote other members of the same nation to leader status.
+	 * 
+	 * @param user The User that is promoting the member.
+	 * @param promoted The User that is being promoted
+	 */
 	public Boolean promoteUser(User user, String promoted) {
+
+		User member = plugin.userManager.getUser(promoted);
+		Group nation = this.getGroup(user.getNation());
+		
+		if (user.getNation() == member.getNation() && plugin.userManager.isLeader(member) == false) {
+			nation.addLeader(promoted);
+		}
+		else {
+			user.message("That is not a valid member to promote.");
+		}
 		return true;
 	}
 	
 	//TODO: test
+	/**
+	 * Allows leaders to demote other members of the same nation from leader status.
+	 * 
+	 * @param user The User that is demoting the leader.
+	 * @param promoted The User that is being demoted
+	 */
 	public Boolean demoteUser(User user, String demoted) {
+
+		User member = plugin.userManager.getUser(demoted);
+		Group nation = this.getGroup(user.getNation());
+		
+		if (user.getNation() == member.getNation() && plugin.userManager.isLeader(member) == true) {
+			nation.removeLeader(demoted);
+		}
+		else {
+			user.message("That is not a valid member to demote.");
+		}
 		return true;
 	}
 	

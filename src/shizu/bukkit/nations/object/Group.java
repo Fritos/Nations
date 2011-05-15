@@ -14,6 +14,8 @@ public class Group extends NAWObject {
 	private ArrayList<String> members;
 	private ArrayList<String> leaders;
 	private ArrayList<String> plots;
+	private ArrayList<String> allies;
+	private ArrayList<String> enemies;
 	
 	// TODO: tie in with Permissions groups (String[] getGroups() ? )
 	
@@ -23,6 +25,8 @@ public class Group extends NAWObject {
 		members = new ArrayList<String>();
 		leaders = new ArrayList<String>();
 		plots = new ArrayList<String>();
+		allies = new ArrayList<String>();
+		enemies = new ArrayList<String>();
 	}
 	
 	/**
@@ -48,6 +52,56 @@ public class Group extends NAWObject {
 		if (hasMember(name) && !hasLeader(name)) {
 			leaders.add(name);
 		}
+	}
+	
+	/**
+	 * Changes diplomatic relationship with another nation.
+	 * 
+	 * @param name the diplomatic title to change
+	 */
+	public void addAlly(String name) {
+		allies.add(name);
+		enemies.remove(name);
+	}
+	
+	/**
+	 * Changes diplomatic relationship with another nation.
+	 * 
+	 * @param name the diplomatic title to change
+	 */
+	public void addNeutral(String name) {
+		allies.remove(name);
+		enemies.remove(name);
+	}
+	
+	/**
+	 * Changes diplomatic relationship with another nation.
+	 * 
+	 * @param name the diplomatic title to change
+	 */
+	public void addEnemy(String name) {
+		allies.remove(name);
+		enemies.add(name);
+	}
+	
+	/**
+	 * Returns the allies of this group/nation.
+	 * 
+	 * @return the allied nation's name
+	 */
+	public ArrayList<String> getAllies() {
+		
+		return allies;
+	}
+	
+	/**
+	 * Returns the enemies of this group/nation.
+	 * 
+	 * @return the enemy nation's name
+	 */
+	public ArrayList<String> getEnemies() {
+		
+		return enemies;
 	}
 	
 	/**

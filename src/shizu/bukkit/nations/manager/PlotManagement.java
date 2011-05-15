@@ -50,7 +50,7 @@ public class PlotManagement extends Management {
 	
 		String locKey = getLocationKey(loc);
 		Plot plot = getPlot(locKey);
-		if (plot == null) { plugin.sendToLog("No plot found at location: " + locKey); }
+		//if (plot == null) { plugin.sendToLog("No plot found at location: " + locKey); } //Usefull for debugging
 		return plot;
 	}
 	

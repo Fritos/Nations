@@ -2,9 +2,11 @@ package shizu.bukkit.nations;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -169,20 +171,51 @@ public class Nations extends JavaPlugin {
 					}
 				}
 				
+				/* Diplomacy Section
+				 * 
+				 * Info - Lists your nation's allies and enemies
+				 * Ally - Allies the subsequent nation
+				 * */
 				if (args[0].equalsIgnoreCase("diplomacy")) {
 					
-					if (args[1].equalsIgnoreCase("war")) {
-						//PLACEHOLDER - starts a war with the provided nation, allies of both nations are alerted and have the option to join in
+					if (args[1].equalsIgnoreCase("info")) {
+						ArrayList<String> allies = groupManager.getGroup(user.getNation()).getAllies();
+						ArrayList<String> enemies = groupManager.getGroup(user.getNation()).getEnemies();
+						String allyList = "";
+						String enemyList = "";
+						
+						user.message(ChatColor.getByCode(5) + "YOUR NATION: " + (groupManager.exists(user.getNation()) ? user.getNation() : "No Nation"));
+						
+						if (allies.size() > 0) {
+							for(int i=0;i<allies.size();i++)
+							{
+								allyList = allyList + allies.get(i) + ", ";
+							}
+							user.message(ChatColor.getByCode(2) + "Allies: " + allyList.substring(0, allyList.length() - 2) + ".");
+						}
+						else {
+							user.message(ChatColor.getByCode(2) + "Allies: None");
+						}
+						
+						if (enemies.size() > 0) {
+							for(int i=0;i<enemies.size();i++)
+							{
+								enemyList = enemyList + enemies.get(i) + ", ";
+							}
+							user.message(ChatColor.getByCode(12) + "Enemies: " + enemyList.substring(0, enemyList.length() - 2) + ".");
+						}
+						else {
+							user.message(ChatColor.getByCode(12) + "Enemies: None");
+						}
 					}
 					
-					if (args[1].equalsIgnoreCase("ally")) {
-						//PLACEHOLDER - requests an alliance with the provided nation. The alliance is not created until both sides type this command
-					}
-					
-					if (args[1].equalsIgnoreCase("gift")) {
-						//PLACEHOLDER - give a plot/iConomy to the provided nation.
+					if (args[1].equalsIgnoreCase("status") && userManager.isLeader(user) == true) {
+						groupManager.changeStatus(user, args[2], args[3]);
 					}
 				}
+				
+				
+				
 			}
 			return true;
 		}
