@@ -75,20 +75,29 @@ public class Nations extends JavaPlugin {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args){
 		
-		// TODO: Make this not suck
 		String name = ((Player) sender).getDisplayName();
 		User user = (userManager.exists(name)) ? userManager.getUser((Player) sender) : null;
+		
+		ChatColor yellow = ChatColor.getByCode(14);
+		ChatColor white = ChatColor.getByCode(15);
 		
 		if (user != null) {
 			
 			if (commandLabel.equalsIgnoreCase("naw")) {
 				
-				//FOR QUICK TESTING/DEBUGGING
-				if (args[0].equalsIgnoreCase("test")) {
-					
+				if (args[0].equalsIgnoreCase("help")) {
+					user.message(yellow + "Main command list: invites, plot, nation, diplomacy");
+					user.message(yellow + "For more information, type /naw <command> help");
 				}
 				
 				if (args[0].equalsIgnoreCase("invites")) {
+					
+					if (args[1].equalsIgnoreCase("help")) {
+						user.message(yellow + "To list your invites, just type /naw invites");
+						user.message(yellow + "Sub-command list");
+						user.message(yellow + "accept <nation>" + white + " - Adds you to the <nation> that invited you.");
+						user.message(yellow + "clear" + white + " - Clears all invites from your invite list.");
+					}
 					
 					if (args[1].equalsIgnoreCase("")) {
 						user.viewInvites();
@@ -104,6 +113,16 @@ public class Nations extends JavaPlugin {
 				}
 				
 				if (args[0].equalsIgnoreCase("plot")) {
+					
+					if (args[1].equalsIgnoreCase("help")) {
+						user.message(yellow + "Sub-command list");
+						user.message(yellow + "claim" + white + " - Claims your nation's ownership on the land you're standing on.");
+						user.message(yellow + "raze" + white + " - Removes your nation's claim on the land you're in.");
+						user.message(yellow + "sell" + white + " - Allows other nation's to purchase the land you're in.");
+						user.message(yellow + "rent" + white + " - Rents the land you're in if it's for sell.");
+						user.message(yellow + "buy" + white + " - Buys the land you're in if it's for sell.");
+						user.message(yellow + "region <name>" + white + " - Names the plot you're in. (Changes enter/leave message)");
+					}
 					
 					if (args[1].equalsIgnoreCase("claim")) {
 						plotManager.claimPlot(user);
@@ -121,16 +140,29 @@ public class Nations extends JavaPlugin {
 						plotManager.rentPlot(user);
 					}
 					
-					if (args[1].equalsIgnoreCase("region")) {
-						plotManager.setRegion(user, args[2]);
-					}
-					
 					if (args[1].equalsIgnoreCase("buy")) {
 						plotManager.buyPlot(user);
+					}
+					
+					if (args[1].equalsIgnoreCase("region")) {
+						plotManager.setRegion(user, args[2]);
 					}
 				}
 				
 				if (args[0].equalsIgnoreCase("nation")) {
+					
+					if (args[1].equalsIgnoreCase("help")) {
+						user.message(yellow + "Sub-command list");
+						user.message(yellow + "found <nation name>" + white + " - Creates a new nation.");
+						user.message(yellow + "invite <user>" + white + " - Invites the <user> to join your nation.");
+						user.message(yellow + "kick <member>" + white + " - Kicks the member from the nation.");
+						user.message(yellow + "promote <member>" + white + " - Promotes the member to leader status.");
+						user.message(yellow + "demote <member>" + white + " - Removes the member's leader status.");
+						user.message(yellow + "leave" + white + " - Leaves your current nation.");
+						user.message(yellow + "disband" + white + " - Destroys your nation and all the plots it has claimed.");
+						user.message(yellow + "rename <nation name>" + white + " - Renames your nation.");
+						user.message(yellow + "tax <rate>" + white + " - Sets the percentage of all member income to be stored in treasury.");
+					}
 					
 					if (args[1].equalsIgnoreCase("found")) {
 						groupManager.foundNation(user, args[2]);
@@ -144,12 +176,10 @@ public class Nations extends JavaPlugin {
 						groupManager.kickUserFromNation(user, args[2]);
 					}
 					
-					//TODO: test
 					if (args[1].equalsIgnoreCase("promote")) {
 						groupManager.promoteUser(user, args[2]);
 					}
 					
-					//TODO: test
 					if (args[1].equalsIgnoreCase("demote")) {
 						groupManager.demoteUser(user, args[2]);
 					}
@@ -177,6 +207,12 @@ public class Nations extends JavaPlugin {
 				 * Ally - Allies the subsequent nation
 				 * */
 				if (args[0].equalsIgnoreCase("diplomacy")) {
+					
+					if (args[1].equalsIgnoreCase("help")) {
+						user.message(yellow + "Sub-command list");
+						user.message(yellow + "status <nation> <status>" + white + " - Changes diplomatic relationship with <nation>");
+						user.message(white + "          - <status> can either be 'ally', 'neutral', or 'enemy'");
+					}
 					
 					if (args[1].equalsIgnoreCase("info")) {
 						ArrayList<String> allies = groupManager.getGroup(user.getNation()).getAllies();
@@ -214,9 +250,8 @@ public class Nations extends JavaPlugin {
 					}
 				}
 				
-				
-				
 			}
+			
 			return true;
 		}
 		
