@@ -1,0 +1,7 @@
+name: test
+main: shizu.bukkit.nations.Nations
+version: 1.0
+commands:
+  NAW:
+    description: NAW super command
+    usage: /naw
